@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    required: [true, "Хэрэглэгчийн нэрийг заавал оруул"],
+  },
   password: String,
   email: {
     type: String,
@@ -12,9 +15,13 @@ const UserSchema = new mongoose.Schema({
     enum: ["User", "Admin"],
     default: "User",
   },
-  phone: Number,
+  phone: String,
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
-const user = mongoose.model("User", UserSchema, "users");
+const user = mongoose.model("User", UserSchema);
 
 module.exports = user;
