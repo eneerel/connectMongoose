@@ -3,13 +3,17 @@ const dotenv = require("dotenv");
 const colors = require("colors");
 const multer = require("multer");
 const path = require("path");
+const cors = require("cors");
 
 const connectDB = require("./config/mongodb");
-const logger = require("./logger/logger");
+const logger = require("./middlewares/logger");
+const cloudinary = require("./utils/cloudinary");
 
 const userRoutes = require("./routes/userRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const travelRoutes = require("./routes/travelRoutes");
+const { resourceUsage } = require("process");
+const { resourceLimits } = require("worker_threads");
 
 dotenv.config();
 
@@ -30,9 +34,10 @@ const upload = multer({ storage: storage });
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(logger);
-app.use("./uploads", express.static("uploads"));
+app.use("/uploads", express.static("uploads"));
 
 app.use("/users", userRoutes);
 app.use("/category", categoryRoutes);
@@ -41,11 +46,12 @@ app.get("/", (req, res) => {
   res.json({ messege: "sain baina uu" });
   //   res.send("<h1>sain baina uu<h1>");
 });
-app.post("./upload", upload.single("image"), (req, res) => {
+app.post("/uploads", upload.single("image"), async (req, res) => {
   console.log("Req", req.file);
-  res.json({
+  const res = await cloudinary.uploader.upload(req.file.path);
+  res.status(200).json({
     messege: "amjilttai hadgallaa.",
-    imgUrl: `${req.protocol}://${req.hostname}:${PORT}${req.file.path}`,
+    imgUrl: result,
   });
 });
 

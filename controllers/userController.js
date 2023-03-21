@@ -13,8 +13,8 @@ const getAllUsers = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) {
+  const { name, email, password, profileImg, role, phone } = req.body;
+  if (!name || !email || !password || !profileImg) {
     res
       .status(400)
       .json({ message: "Tanii ner email eswel password baihgui baina." });
@@ -24,6 +24,9 @@ const createUser = async (req, res) => {
       name,
       password,
       email,
+      role,
+      profileImg,
+      phone,
     });
     res.status(201).json({ message: "amjilttai" });
   } catch (error) {
