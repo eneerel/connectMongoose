@@ -3,12 +3,12 @@ const Category = require("../model/Categories");
 const getAllCategories = async (req, res) => {
   try {
     const category = await Category.find({});
+    if (!category) {
+      res.status(200).json({ message: "Category hooson baina." });
+    }
     res.status(201).json({ message: "amjilttai", category });
   } catch (error) {
-    res.status(400).json({
-      message: "medeelliig awahad aldaa garlaa",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
@@ -26,9 +26,7 @@ const createCategory = async (req, res) => {
     });
     res.status(201).json({ message: "amjilttai", category });
   } catch (error) {
-    res
-      .status(400)
-      .json({ message: "burtgel amjiltgui bollo ", error: error.message });
+    next(error);
   }
 };
 
@@ -41,12 +39,12 @@ const getCategory = async (req, res) => {
   }
   try {
     const category = await Category.findById(id);
+    if (!category) {
+      res.status(400).json({ message: `${id} -тэй хэрэглэгч олдохгүй байна.` });
+    }
     res.status(201).json({ message: `${id} - tai hereglegc oldloo`, category });
   } catch (error) {
-    res.status(400).json({
-      message: "aldaa garlaa",
-      error: error.message,
-    });
+    next(error);
   }
 };
 const updateCategory = async (req, res) => {
@@ -60,15 +58,15 @@ const updateCategory = async (req, res) => {
     const category = await Category.findByIdAndUpdate(id, req.body, {
       new: true,
     });
+    if (!category) {
+      res.status(400).json({ message: `${id} -тэй хэрэглэгч олдохгүй байна.` });
+    }
     res.status(201).json({
       message: `${id} - tai hereglegciin medeelel amjilttai soligdloo`,
       category,
     });
   } catch (error) {
-    res.status(400).json({
-      message: "aldaa garlaa",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
@@ -83,10 +81,7 @@ const deleteCategory = async (req, res) => {
     const category = await Category.findByIdAndDelete(id);
     res.status(201).json({ message: `${id} - tai hereglegc ustlaa`, category });
   } catch (error) {
-    res.status(400).json({
-      message: "aldaa garlaa",
-      error: error.message,
-    });
+    next(error);
   }
 };
 

@@ -1,9 +1,9 @@
+const cors = require("cors");
 const express = require("express");
 const dotenv = require("dotenv");
 const colors = require("colors");
 const multer = require("multer");
 const path = require("path");
-const cors = require("cors");
 
 const connectDB = require("./config/mongodb");
 const logger = require("./middlewares/logger");
@@ -48,7 +48,7 @@ app.get("/", (req, res) => {
 });
 app.post("/uploads", upload.single("image"), async (req, res) => {
   console.log("Req", req.file);
-  const res = await cloudinary.uploader.upload(req.file.path);
+  const result = await cloudinary.uploader.upload(req.file.path);
   res.status(200).json({
     messege: "amjilttai hadgallaa.",
     imgUrl: result,
