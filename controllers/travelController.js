@@ -2,7 +2,7 @@ const Travel = require("../model/Travels");
 
 const getAllTravel = async (req, res) => {
   try {
-    const Travels = await Travel.find({});
+    const Travels = await Travel.find().populate("category");
     res.status(201).json({ message: "amjilttai", Travels });
   } catch (error) {
     res.status(400).json({
@@ -12,12 +12,10 @@ const getAllTravel = async (req, res) => {
   }
 };
 
-const createTravel = async (req, res) => {
-  const { title, travelImg, detail, price, location, day } = req.body;
+const createTravel = async (req, res, next) => {
+  const { title, travelImg, detail, price, location, day, category } = req.body;
   if (!title || !travelImg || !detail || !price || !location || !day) {
-    res
-      .status(400)
-      .json({ message: "Tanii ner email eswel password baihgui baina." });
+    res.status(400).json({ message: "Medeelliig zaawal buten oruulna uu." });
   }
   try {
     const travel = await Travel.create({
@@ -27,16 +25,15 @@ const createTravel = async (req, res) => {
       price,
       location,
       day,
+      category,
     });
     res.status(201).json({ message: "amjilttai", travel });
   } catch (error) {
-    res
-      .status(400)
-      .json({ message: "burtgel amjiltgui bollo ", error: error.message });
+    next(error);
   }
 };
 
-const getTravel = async (req, res) => {
+const getTravel = async (req, res, next) => {
   const { id } = req.params;
   if (!id) {
     res.status(400).json({
@@ -47,13 +44,10 @@ const getTravel = async (req, res) => {
     const travel = await Travel.findById(id);
     res.status(201).json({ message: `${id} - tai hereglegc oldloo`, travel });
   } catch (error) {
-    res.status(400).json({
-      message: "aldaa garlaa",
-      error: error.message,
-    });
+    next(error);
   }
 };
-const updateTravel = async (req, res) => {
+const updateTravel = async (req, res, next) => {
   const { id } = req.params;
   if (!id) {
     res.status(400).json({
@@ -67,14 +61,11 @@ const updateTravel = async (req, res) => {
       travel,
     });
   } catch (error) {
-    res.status(400).json({
-      message: "aldaa garlaa",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const deleteTravel = async (req, res) => {
+const deleteTravel = async (req, res, next) => {
   const { id } = req.params;
   if (!id) {
     res.status(400).json({
@@ -85,10 +76,7 @@ const deleteTravel = async (req, res) => {
     const travel = await Travel.findByIdAndDelete(id);
     res.status(201).json({ message: `${id} - tai hereglegc ustlaa`, travel });
   } catch (error) {
-    res.status(400).json({
-      message: "aldaa garlaa",
-      error: error.message,
-    });
+    next(error);
   }
 };
 

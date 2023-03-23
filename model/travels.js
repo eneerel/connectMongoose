@@ -10,6 +10,7 @@ const TravelSchema = new mongoose.Schema({
   price: String,
   location: String,
   day: Number,
+  category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
 });
 
 const travel = mongoose.model("Travel", TravelSchema);

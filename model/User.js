@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Хэрэглэгчийн нэрийг заавал оруул"],
   },
   profileImg: String,
-  password: String,
+  password: { type: String, select: false },
   email: {
     type: String,
     unique: true,

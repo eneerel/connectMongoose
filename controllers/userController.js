@@ -1,4 +1,6 @@
 const User = require("../model/User");
+const bcyrpt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const getAllUsers = async (req, res, next) => {
   try {
@@ -87,20 +89,60 @@ const deleteUsers = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  const { email, password } = req.body;
   try {
-    const user = await User.find({ email, password });
-    if (!user.length) {
+    const user = await User.findOne({ email: req.body.email }).select(
+      "+password"
+    );
+    if (!user) {
       res.status(400).json({
         message: "email eswel nuuts ug buruu baina.",
       });
     }
-    res.status(200).json({ message: "Amjilttai newterlee", user });
+
+    const checkPass = bcyrpt.compareSync(req.body.password, user.password);
+
+    if (!checkPass) {
+      res.status(400).json({
+        message: "email eswel nuuts ug buruu baina.",
+      });
+    }
+
+    const { _id, email, name, role } = user;
+    const token = jwt.sign(
+      { _id, email, name, role },
+      process.env.JWT_SECRET_TOKEN,
+      {
+        expiresIn: 36000,
+      }
+    );
+
+    res.status(200).json({
+      message: "email eswel nuuts ug buruu baina.",
+      token,
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const register = async (req, res, next) => {
+  const { email, password, name, phone } = req.body;
+  try {
+    const hashedPassword = bcyrpt.hashSync(password, 10);
+    const user = await User.create({
+      email,
+      password,
+      name,
+      phone,
+      password: hashedPassword,
+    });
+    res.status(200).json({ message: "Amjilttai burtgegdlee", user });
   } catch (error) {
     next(error);
   }
 };
 module.exports = {
+  register,
   login,
   createUser,
   getAllUsers,

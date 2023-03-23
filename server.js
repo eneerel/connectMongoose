@@ -8,6 +8,7 @@ const path = require("path");
 const connectDB = require("./config/mongodb");
 const logger = require("./middlewares/logger");
 const cloudinary = require("./utils/cloudinary");
+const error = require("./middlewares/error");
 
 const userRoutes = require("./routes/userRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
@@ -54,6 +55,8 @@ app.post("/uploads", upload.single("image"), async (req, res) => {
     imgUrl: result,
   });
 });
+
+app.use(error);
 
 connectDB(dburi);
 
