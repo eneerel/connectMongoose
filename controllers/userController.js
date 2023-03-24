@@ -106,7 +106,7 @@ const login = async (req, res, next) => {
         message: "email eswel nuuts ug buruu baina.",
       });
     }
-
+    console.log(checkPass);
     const { _id, email, name, role } = user;
     const token = jwt.sign(
       { _id, email, name, role },
@@ -117,9 +117,9 @@ const login = async (req, res, next) => {
     );
 
     res.status(200).json({
-      message: "email eswel nuuts ug buruu baina.",
-      token,
+      message: "SUccess",
       user,
+      token,
     });
   } catch (error) {
     next(error);
